@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AnagramProbleam {
+public class AnagramProblem {
     public static void main(String[] args) {
         String[] s = {"cat","rat","bat","tea","ate"};
         Map<String, List<String>>  grouped = Arrays.stream(s)

@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public class Main {
     public static void main(String[] args) {
         System.out.println("Hello world!");
-
+        //Reversing the character & skip number & special symbol
         String s = "ab$c#ab$x";
         char [] charArray = s.toCharArray();
         int left = 0, right = s.length() - 1;

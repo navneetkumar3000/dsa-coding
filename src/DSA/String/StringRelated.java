@@ -13,7 +13,7 @@ public class StringRelated {
         for(String s2 : s.split(" ")){
            StringBuilder sb = new StringBuilder(s2);
            sb.reverse();
-            output.append(sb).append(" ");
+           output.append(sb).append(" ");
         }
         System.out.println(output);
         String sb1 = Arrays.stream(s.split(" "))
