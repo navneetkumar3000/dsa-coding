@@ -1,0 +1,141 @@
+Three tables Employees( employee_id, employee_name), TrainingCourses(course_id, course_name, course_duration),
+TrainingResults(employee_id,course_id,score)
+result employee_name,    course_name,      score
+           alice            english          49
+           alice            hindi            50
+           bob              english          59
+           cherry           english          60
+           cherry           hindi            59
+data entry :-
+Employees
+employee_id      employee_name
+    1                alice
+    2                bob
+    3                cherry
+
+TrainingCourses
+course_id              course_name                     course_duration
+   101                  English                             40
+   102                  Hindi                               70
+   103                  Math                                90
+
+TrainingResults
+employee_id              course_id                  score
+    1                        101                      49
+    1                        102                      50
+    2                        101                      59
+    3                        101                      60
+    3                        102                      59
+
+1.Find all employees (employee_name, course_name & score)
+Solution :- MySQL/PostgresSQL
+SELECT
+    e.employee_name,
+    c.course_name,
+    r.score
+FROM TrainingResults r
+JOIN Employees e
+    ON r.employee_id = e.employee_id
+JOIN TrainingCourses c
+    ON r.course_id = c.course_id
+ORDER BY e.employee_name, c.course_name;
+
+2.Employees Who Passed (score ≥ 50)
+Solution :- MySQL/PostgresSQL
+SELECT
+    e.employee_name,
+    c.course_name,
+    r.score
+FROM TrainingResults r
+JOIN Employees e
+    ON r.employee_id = e.employee_id
+JOIN TrainingCourses c
+    ON r.course_id = c.course_id
+WHERE r.score >= 50
+ORDER BY e.employee_name;
+
+3.Employees With No Training Taken
+Solution :- MySQL/PostgresSQL
+SELECT
+    e.employee_name
+FROM Employees e
+LEFT JOIN TrainingResults r
+    ON e.employee_id = r.employee_id
+WHERE r.employee_id IS NULL;
+
+
+4.Employees With Their Courses (Including No Course)
+Solution :- MySQL/PostgresSQL
+SELECT
+    e.employee_name,
+    c.course_name,
+    r.score
+FROM Employees e
+LEFT JOIN TrainingResults r
+    ON e.employee_id = r.employee_id
+LEFT JOIN TrainingCourses c
+    ON r.course_id = c.course_id
+ORDER BY e.employee_name;
+
+5.Highest Score Per Employee
+Solution :- MySQL/PostgresSQL
+SELECT
+    e.employee_name,
+    MAX(r.score) AS highest_score
+FROM Employees e
+JOIN TrainingResults r
+    ON e.employee_id = r.employee_id
+GROUP BY e.employee_name;
+
+6.Highest Score Per Course
+Solution :- MySQL/PostgresSQL
+SELECT
+    c.course_name,
+    MAX(r.score) AS highest_score
+FROM TrainingCourses c
+JOIN TrainingResults r
+    ON c.course_id = r.course_id
+GROUP BY c.course_name;
+
+7.Employees Who Took More Than One Course
+Solution :- MySQL/PostgresSQL
+SELECT
+    e.employee_name,
+    COUNT(r.course_id) AS course_count
+FROM Employees e
+JOIN TrainingResults r
+    ON e.employee_id = r.employee_id
+GROUP BY e.employee_name
+HAVING COUNT(r.course_id) > 1;
+
+8.Course With Average Score
+Solution :- MySQL/PostgresSQL
+SELECT
+    c.course_name,
+    AVG(r.score) AS avg_score
+FROM TrainingCourses c
+JOIN TrainingResults r
+    ON c.course_id = r.course_id
+GROUP BY c.course_name;
+
+9.Rank Employees by Score (Per Course)
+Solution :- MySQL/PostgresSQL
+SELECT
+    e.employee_name,
+    c.course_name,
+    r.score,
+    RANK() OVER (PARTITION BY c.course_name ORDER BY r.score DESC) AS rank
+FROM TrainingResults r
+JOIN Employees e
+    ON r.employee_id = e.employee_id
+JOIN TrainingCourses c
+    ON r.course_id = c.course_id;
+
+10.Employees Who Failed Any Course (score < 50)
+Solution :- MySQL/PostgresSQL
+SELECT DISTINCT
+    e.employee_name
+FROM Employees e
+JOIN TrainingResults r
+    ON e.employee_id = r.employee_id
+WHERE r.score < 50;
