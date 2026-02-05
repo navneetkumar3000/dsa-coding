@@ -1,0 +1,225 @@
+=======================================================================================================================
+Symmetric Encryption :-
+1.Same Secret key is used for both encryption & decryption.
+2.It is fast & used for large data.
+Dis :-
+1.Needs to be secure our key.
+
+=======================================================================================================================
+Types of Symmetric Encryption :-
+=======================================================================================================================
+1️⃣DES (Data Encryption Standard) ❌ Obsolete :-
+
+1.It is a weak encryption & key size is 56 bits(very small), Block size 8 bytes & slow as it uses brute-forced.
+2.Do NOT use in real systems.
+3.Only for legacy / interview knowledge.
+4.DES input length must be multiple of 8 when decryption with padded cipher.
+5.Will get javax.crypto.IllegalBlockSizeException if block size is not 8 bytes.
+
+=======================================================================================================================
+2️⃣ 3DES (Triple DES) ⚠️ Legacy :-
+
+1.It works like Encrypt → Decrypt → Encrypt (DES × 3).
+2.Key Size is 112 or 168 bits & Block size 8 bytes.
+3.Safer than DES but slow, deprecated now.
+4.3DES input length must be multiple of 8 when decryption with padded cipher.
+5.Will get javax.crypto.IllegalBlockSizeException if block size is not 8 bytes(64 bits) .
+=======================================================================================================================
+3️⃣ AES (Advanced Encryption Standard) ✅ GOLD STANDARD :-
+
+1.It is fast, key size is 128/192/256 bits & Block size is fixed 128 bits(16 bytes).
+2.It is mainly used in HTTPS, JWT, Databases, Disk Encryption, etc.
+Modes in AES->
+1️⃣ ECB (Electronic Codebook) ❌ NEVER USE :-
+ECB leaks patterns and must never be used.
+Cipher.getInstance("AES/ECB/PKCS5Padding"); // ❌
+
+2️⃣ CBC (Cipher Block Chaining) ⚠️ Legacy
+CBC provides confidentiality but not authenticity.
+Cipher.getInstance("AES/CBC/PKCS5Padding");
+
+3️⃣ CFB (Cipher Feedback)
+⚠️ Rarely used today
+
+4️⃣ OFB (Output Feedback)
+⚠️ Obsolete
+
+5️⃣ CTR (Counter Mode) ⚠️ Fast but risky
+⚠️ Use only with MAC
+Cipher.getInstance("AES/CTR/NoPadding");
+
+6️⃣ GCM (Galois/Counter Mode) ✅ BEST PRACTICE
+AES-GCM provides authenticated encryption and is the industry standard.
+Cipher.getInstance("AES/GCM/NoPadding");
+
+7️⃣ CCM (Counter with CBC-MAC)
+⚠️ Less common than GCM
+
+8️⃣ XTS (Disk Encryption)
+⚠️ Specialized use only
+=======================================================================================================================
+🧠 Comparison Table (Interview Gold)
+Mode	IV/Nonce	Integrity	Secure
+ECB	      ❌	      ❌	      ❌
+CBC	      ✅	      ❌	      ⚠️
+CFB	      ✅	      ❌	      ⚠️
+OFB    	  ✅	      ❌	      ⚠️
+CTR	      ✅	      ❌	      ⚠️
+GCM	      ✅	      ✅	      ✅
+CCM	      ✅	      ✅	      ⚠️
+XTS	    Tweak	      ❌	      ⚠️
+
+=======================================================================================================================
+4️⃣ Blowfish ⚠️ Old but flexible :-
+
+1.Key size 32-448 bits, block size 64 bits, slower than AES.
+
+=======================================================================================================================
+5️⃣ ChaCha20 🚀 Modern & Fast :-
+
+1.It is stream cipher not a block.
+2.Very fast in Mobile Devices.
+3.It is used in TLS, HTTP/3.
+4.It is supports from Java 11+.
+Notes:- If u want to using this enc & dec we need to add Bouncing Castle jar to our library
+        version below 1.70.
+
+=======================================================================================================================
+🧠 Interview Summary Table :-
+Algorithm	           Key Size	                  Status
+DES	                    56 bit	                ❌ Broken
+3DES	                168 bit	                ⚠️ Deprecated
+AES	                    128/256	                ✅ Best
+Blowfish	            up to 448	            ⚠️ Old
+ChaCha20	            256	                    ✅ Modern
+
+=======================================================================================================================
+Steps to create AES Encryption & Decryption :-
+=======================================================================================================================
+1.Generate a Secret Key using KeyGenerator with key size & return as SecretKey.(javax.crypto.*)
+      KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+      keyGen.init(256);
+      SecretKey key = keyGen.generateKey();
+
+2.Do Encryption using doFinal() in that pass the plainText in Bytes through Cipher.
+      Cipher cipher = Cipher.getInstance(ALGORITHM);
+      cipher.init(Cipher.ENCRYPT_MODE, key);
+      byte[] encryptedBytes = cipher.doFinal(plainText.getBytes());
+      return Base64.getEncoder().encodeToString(encryptedBytes);
+
+3.Do Decryption using doFinal() in that pass the Bytes data & return String doFinal().
+      Cipher cipher = Cipher.getInstance(ALGORITHM);
+      cipher.init(Cipher.DECRYPT_MODE, key);
+      byte[] decryptedBytes = Base64.getDecoder().decode(cipherText);
+      return new String(cipher.doFinal(decryptedBytes));
+
+=======================================================================================================================
+Steps to create AES Encryption & Decryption :-
+=======================================================================================================================
+1.Generate a Secret Key using KeyGenerator with key size & return as SecretKey.(javax.crypto.*)
+      KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+      keyGen.init(256);
+      SecretKey key = keyGen.generateKey();
+
+2.Do Encryption using doFinal() in that pass the plainText in Bytes through Cipher.
+      Cipher cipher = Cipher.getInstance(ALGORITHM);
+      cipher.init(Cipher.ENCRYPT_MODE, key);
+      byte[] encryptedBytes = cipher.doFinal(plainText.getBytes());
+      return Base64.getEncoder().encodeToString(encryptedBytes);
+
+3.Do Decryption using doFinal() in that pass the Bytes data & return String doFinal().
+      Cipher cipher = Cipher.getInstance(ALGORITHM);
+      cipher.init(Cipher.DECRYPT_MODE, key);
+      byte[] decryptedBytes = Base64.getDecoder().decode(cipherText);
+      return new String(cipher.doFinal(decryptedBytes));
+
+=======================================================================================================================
+=======================================================================================================================
+Asymmetric Encryption :-
+Java supports asymmetric crypto mainly via JCA/JCE (java.security, javax.crypto).
+1.Encryption is done by Public Key where as Decryption is done by Private Key.
+2.It is fast & used for small data.
+Public Key → Shared with everyone.
+Private Key → Kept secret by the owner.
+How it works:-
+Encrypt with public key → decrypt with private key.
+Sign with private key → verify with public key.
+Why Asymmetric :-
+Because it Solves key-sharing problem which we are facing in symmetric encryption
+=======================================================================================================================
+Types of Asymmetric Encryption :-
+=======================================================================================================================
+1️⃣ RSA (Rivest, Shamir, and Adleman) :-
+
+1.It is most widely used.
+2.It use case is Key Exchange, Digital Signatures & Encrypting small data (keys, hashes).
+3.Java supports KeyPairGenerator, Cipher & Signature.
+4.Key Size 1024 (deprecated), 2048 (min required) & 3072/4096 (recommended).
+
+=======================================================================================================================
+2️⃣ DSA (Digital Signature Algorithm) :-
+
+1.It is only for signatures.
+2.It use case is Digital Signature only there is no encryption.
+3.Key Size 1024 (deprecated), 2048/3072 (recommended).
+
+=======================================================================================================================
+3️⃣ Elliptic Curve Cryptography (ECC) :-
+
+It is Modern, fast, and secure 🔥.
+
+Two Types :-
+1.ECDSA (Elliptic Curve Digital Signature Algorithm) :-
+It use case is Digital Signature, JWT signing & TLS certificates.
+Key Size (Curved-Based) is P-256, P-384 & P-521.
+
+2.ECDH (Elliptic Curve Diffie–Hellman) :-
+It use case is Secure Key Exchange, TLS handshake & Generating shared secrets.
+
+=======================================================================================================================
+4️⃣ Diffie–Hellman (DH) :-
+
+1.It is used for key-exchange only.
+2.It use case is Secure Shared Key Generation & Predecessor of ECDH.
+3.Key Size is 2048+ bits.
+4.It is Slower than ECDH, used less today.
+
+=======================================================================================================================
+5️⃣ EdDSA (Modern ECC – very important 🚀)
+
+1.It has two variants.
+a>Ed25519
+b>Ed448
+2.It use case is Digital signatures, JWT, SSH & Modern TLS.
+3.Java Supports 15+(native) or Bouncing Castle.
+4.Benefits is Faster than RSA/ECDSA, Safer defaults & Deterministic signatures.
+
+=======================================================================================================================
+6️⃣ ElGamal
+
+1.Rarely used.
+2.It use case is Encryption & Signatures.
+3.Java Supports ❌ Not native, ✅ Bouncy Castle only.
+
+=======================================================================================================================
+7️⃣ XDH (Key Agreement – Modern)
+
+1.It has two variants & Used with Ed curves.
+a>X25519
+b>X448
+2.It use case is Digital signatures, & TLS 1.3.
+3.Java Supports 11+.
+
+=======================================================================================================================
+🧠 Quick Interview Table
+Algorithm	   Encryption	   Signature	   Key Exchange	    Java Native
+RSA	             ✅	             ✅	              ❌	           ✅
+DSA	             ❌	             ✅	              ❌	           ✅
+DH	             ❌	             ❌	              ✅	           ✅
+ECDH	         ❌	             ❌	              ✅	           ✅
+ECDSA	         ❌	             ✅	              ❌	           ✅
+Ed25519	         ❌	             ✅	              ❌	           ✅ (15+)
+X25519	         ❌	             ❌	              ✅	           ✅
+ElGamal	         ✅	             ✅	              ❌	           ❌
+
+=======================================================================================================================

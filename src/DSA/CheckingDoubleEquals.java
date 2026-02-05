@@ -1,5 +1,7 @@
 package DSA;
 
+import java.util.ArrayList;
+
 public class CheckingDoubleEquals {
     public static void main(String[] args) {
         Integer a = 127;
@@ -18,5 +20,10 @@ public class CheckingDoubleEquals {
         int g = 123;
         int h = 123;
         System.out.println(g == h);
+
+        ArrayList <Number> array =new ArrayList<>();
+        array.add(10);
+        System.out.println(array);
+
     }
 }
