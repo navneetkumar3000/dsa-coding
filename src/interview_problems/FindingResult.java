@@ -3,7 +3,7 @@ package interview_problems;
 public class FindingResult {
     public static void main(String[] args) {
         hack_funct(44,3,3,22,48.5);
-        hack_funct(new double[]{1, 2, 3});
+        hack_funct(new double[]{1, 5, 3});
     }
 
     private static void hack_funct(double ...numbers) {
